@@ -49,8 +49,6 @@ class NGramModel:
 				# Create Statistics for All nGram Lengths / Loop Through Training Data / Create Keys
 				outerKey = self.tuplefy(data[j-i:j,:])
 				innerKey = tuple(data[j])
-				if innerKey == (-1,-1,-1): #TEST
-					pu.db #TEST
 				# Create Statistics for All nGram Lengths / Loop Through Training Data / Add Counts to Keys
 				if outerKey not in nGramsDict:
 					nGramsDict[outerKey] = {}
@@ -115,8 +113,6 @@ class NGramModel:
 					addProb *= self.linearInterpolationWeights[i][1]
 				else:
 					addProb *= self.linearInterpolationWeights[i][0]
-				if addProb <= 0: #TEST
-					pu.db #TEST
 				if verbose:
 					print '\t\t' + str(prevSequence) + '->' + str(currentWord) + ' | ' + str(round(log(addProb,2)*100000)/100000.0)
 				seqProbability += addProb
@@ -150,40 +146,10 @@ class NGramModel:
 		# If the prefix sequence word has been seen before but the current word has never been seen before, 
 		# return the adjusted probability using missing probility data
 		else:
-			# TODO: Verify this equation (Does normalizing sequence work? Can you just compute inverse of found data?)
-			# Consider: This does not seem computationally wonderful.
-			totalProbability = 0#TEST
-			for word in self.nGrams[0][()].keys():#TEST
-				probAdd = self.findNGramProbability(nGram - 1, prevSequence[1:len(prevSequence)], word)#TEST
-				totalProbability += probAdd#TEST
-			# if totalProbability <= 1 and depth == 0:										#TEST
-			# 	pu.db 															#TEST
-			# 	for word in self.nGrams[0][()].keys():#TEST
-			# 		probAdd = self.findNGramProbability(nGram - 1, prevSequence[1:len(prevSequence)], word)#TEST
-			# 		totalProbability += probAdd#TEST
-			normalizingProbability = 0
-			for word in self.nGrams[0][()].keys():
-				if word in self.nGrams[nGram][prevSequence].keys(): #TEST
-					continue #TEST
-				probAdd = self.findNGramProbability(nGram - 1, prevSequence[1:len(prevSequence)], word)
-				normalizingProbability += probAdd
-			normalizingProbability2 = 1
+			normalizingProbability = 1
 			for word in self.nGrams[nGram][prevSequence].keys():
 				probRed = self.findNGramProbability(nGram - 1, prevSequence[1:len(prevSequence)], word)
-				normalizingProbability2 -= probRed
-			if depth == 0: #TEST
-				print str(nGram),
-				print ' | ' + str(round(totalProbability*100000)/100000.0),#TEST
-				print ' | ' + str(round((1-totalProbability)*100000)/100000.0),#TEST
-				print ' | ' + str(round((normalizingProbability)*100000)/100000.0),#TEST
-				print ' | ' + str(round((normalizingProbability2)*100000)/100000.0),#TEST
-				print ' | ' + str(round((normalizingProbability2-normalizingProbability)*100000)/100000.0) #TEST
-				print ' | ' + str(round((self.missingProbabilityDensity[nGram - 1][prevSequence[1:len(prevSequence)]])*100000)/100000.0) #TEST
-				# print ' | ' + str(round(self.findNGramProbability(0, (), (-1,-1,-1))*100000)/100000.0) #TEST
-			# if round(normalizingProbability*100000) != round(normalizingProbability2*100000):				#TEST
-				# pu.db 															#TEST
-			if normalizingProbability <= 0:										#TEST
-				pu.db 															#TEST
+				normalizingProbability -= probRed
 			return 	self.missingProbabilityDensity[nGram][prevSequence] * \
 					self.findNGramProbability(nGram - 1, prevSequence[1:len(prevSequence)], currentWord) * \
 					(1.0 / normalizingProbability)
