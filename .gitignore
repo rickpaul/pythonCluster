@@ -1,0 +1,25 @@
+# Deprecated Files
+deprecated/*
+
+# Octave Help Files
+octave-workspace
+
+# Compiled files
+*.pyc
+
+# iPython Notebooks — generally for testing.
+*.ipynb
+
+# OSX Specific System Files
+.DS_Store
+*.swp
+.Spotlight-V100
+.Trashes
+
+# Win Specific System Files
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Automaticly added to end of file by tools
